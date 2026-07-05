@@ -1,3 +1,12 @@
+//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+//Begin of authorship and additional info section
+
+//Author: etcentura
+//Date:
+
+//End of authorship and additional info section
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 module isp_negative_wrapper
 #
 (
