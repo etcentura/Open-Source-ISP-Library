@@ -1,0 +1,199 @@
+{
+  "main": {
+    "id": "7b51dfd25cc95c1b",
+    "type": "split",
+    "children": [
+      {
+        "id": "829b75b973fe9f2b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8877420136ae77db",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "isp_negative_filter/Negative_filter_concept.excalidraw.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Negative_filter_concept.excalidraw"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c3f19a0245165559",
+    "type": "split",
+    "children": [
+      {
+        "id": "559d7394709edfb8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7f40325d58c4d3b8",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "d4c523d993b0cc68",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "3ff15e0514bc3e75",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200,
+    "collapsed": true
+  },
+  "right": {
+    "id": "b9f71f83134fd480",
+    "type": "split",
+    "children": [
+      {
+        "id": "f685d097648b60f1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5e1be25989d3ad26",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "isp_negative_filter/Negative_filter_concept.excalidraw.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки для Negative_filter_concept.excalidraw"
+            }
+          },
+          {
+            "id": "39367a8a9a19298f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "isp_negative_filter/Negative_filter_concept.excalidraw.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки из Negative_filter_concept.excalidraw"
+            }
+          },
+          {
+            "id": "c45c180a5e92eaef",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "341b523abe3a04a6",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "80277a7918947a1f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "isp_negative_filter/Negative_filter_concept.excalidraw.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура Negative_filter_concept.excalidraw"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false,
+      "obsidian-excalidraw-plugin:Создать новый чертеж": false
+    }
+  },
+  "active": "8877420136ae77db",
+  "lastOpenFiles": [
+    "isp_gamma_correction/Drawing 2026-07-26 13.21.25.excalidraw.md",
+    "isp_negative_filter/Negative_filter_concept.excalidraw.md",
+    "isp_gamma_correction/Без названия.canvas",
+    "Без названия.canvas",
+    "isp_logarithm_filter",
+    "isp_negative_filter",
+    "isp_image_cutter",
+    "Добро пожаловать.md",
+    "isp_gamma_correction"
+  ]
+}
