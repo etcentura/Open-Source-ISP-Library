@@ -84,9 +84,9 @@ end
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of latching input data section
-always_ff @(posedge clk or negedge rsn_n)
+always_ff @(posedge clk or negedge rst_n)
 begin
-	if(!rsn_n)
+	if(!rst_n)
 		begin
 			latch_stream_data 	<= '0;
 			latch_valid_data 	<= '0;
@@ -107,9 +107,9 @@ end
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of driving range selection section
-always_ff @(posedge clk or negedge rsn_n)
+always_ff @(posedge clk or negedge rst_n)
 begin
-	if(!rsn_n)
+	if(!rst_n)
 		begin
 			result_stream_data 	<= '0;
 			result_valid_data 	<= '0;
@@ -150,14 +150,14 @@ end
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of driving bypass mode section
-always_ff @(posedge clk or negedge rsn_n)
+always_ff @(posedge clk or negedge rst_n)
 begin
-	if(!rsn_n)
+	if(!rst_n)
 		begin
 			out_stream_data <= '0;
 			out_valid_data 	<= '0;
 			out_first_data 	<= '0;
-			out_last_dat 	<= '0;
+			out_last_data 	<= '0;
 		end
 	else
 		begin
@@ -165,13 +165,13 @@ begin
 				out_stream_data <= latch_stream_data;
 				out_valid_data 	<= latch_valid_data;
 				out_first_data 	<= latch_first_data;
-				out_last_dat 	<= latch_last_data;
+				out_last_data 	<= latch_last_data;
 			end
 			else begin
 				out_stream_data <= result_stream_data;
 				out_valid_data 	<= result_valid_data;
 				out_first_data 	<= result_first_data;
-				out_last_dat 	<= result_last_data;
+				out_last_data 	<= result_last_data;
 			end
 		end
 end
