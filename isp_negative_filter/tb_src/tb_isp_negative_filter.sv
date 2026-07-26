@@ -21,7 +21,7 @@ logic 				 			in_last_data;
 
 logic 	[CSR_WIDTH-1:0] 		in_range_start_csr = 64;
 logic 	[CSR_WIDTH-1:0] 		in_range_finish_csr = 128;
-logic 	[CSR_WIDTH-1:0] 		in_mode_csr = '0;
+logic 	[CSR_WIDTH-1:0] 		in_mode_csr;
 
 logic 	[DATA_WIDTH-1:0] 		out_stream_data;
 logic 				 			out_valid_data;
@@ -29,9 +29,6 @@ logic 				 			out_first_data;
 logic 				 			out_last_data;
 
 //File related info
-parameter 	COLNUM		 =   640                	;
-parameter 	LINNUM		 =   512                	;
-parameter   TOTAL_BYTES  =   COLNUM * LINNUM    	;  
 
 string 		filename                        		;
 int    		last_slash_pos                  		;
@@ -39,22 +36,35 @@ int    		last_dot_pos                    		;
 string   	output_file_path                        ;
 int      	result_fd                               ;
 
-string result_pathes_template  = "../../../../../../../isp_negative_filter/results/640_512";
+string result_pathes_template ="../../../../../../../isp_negative_filter/results/";
+string current_output_dir;
+
+int allowed_resolutions[4][2] = 	'{
+										'{640, 		480 	},
+										'{640, 		512 	},
+										'{1280, 	720		},
+										'{1920, 	1080 	}
+									};
+
+int current_width, current_height, current_total_bytes;
+string current_width_str, current_height_str;
 
 byte file_data_queue_r[$];
-string 	original_images_paths[];
-assign original_images_paths =     {
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/tank_shooting_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/abstract_gradient_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/checker_board_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/colorful_flowers_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/flowers_and_book_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/japanese_racing_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/Lenna_(test_image)_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/mosaic_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/mountain_640_512.data",
-                            			"../../../../../../../isp_python_image_converter/converted_images/640_512/powerplant_640_512.data"
-                        			};
+string current_original_name;
+string 	original_images_names_templates[];
+assign original_images_names_templates =     {
+												"tank_shooting_",
+												"abstract_gradient_",
+												"checker_board_",
+												"colorful_flowers_",
+												"flowers_and_book_",
+												"japanese_racing_",
+												"Lenna_(test_image)_",
+												"mosaic_",
+												"mountain_",
+												"powerplant_"
+                        					};
+string input_files_path_template = "../../../../../../../isp_python_image_converter/converted_images/";
 
 
 
@@ -77,13 +87,16 @@ i_isp_negative_filter
 (
 	.clk 					(clk),
 	.rst_n 					(rst_n),
+
 	.in_stream_data 		(in_stream_data),
 	.in_valid_data 			(in_valid_data),
 	.in_first_data 			(in_first_data),
 	.in_last_data 			(in_last_data),
 	.in_range_start_csr 	(in_range_start_csr),
 	.in_range_finish_csr 	(in_range_finish_csr),
+
 	.in_mode_csr 			(in_mode_csr),
+
 	.out_stream_data 		(out_stream_data),
 	.out_valid_data 		(out_valid_data),
 	.out_first_data 		(out_first_data),
@@ -96,7 +109,7 @@ i_isp_negative_filter
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of reading file section
-task read_file(input string file_path);
+task read_file(input string file_path, input int total_bytes);
     string path_to_the_file_r;
     int file_descriptor_r;
 
@@ -110,7 +123,7 @@ task read_file(input string file_path);
 
     file_data_queue_r.delete();
 
-    for (int i=0; i<TOTAL_BYTES; ++i) begin
+    for (int i=0; i<total_bytes; ++i) begin
         file_data_queue_r.push_back(byte'($fgetc(file_descriptor_r)));
     end
 
@@ -122,8 +135,8 @@ endtask
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of send line task section
-task send_one_line();
-    for (int i=0; i<COLNUM; ++i) begin
+task send_one_line(input int current_width);
+    for (int i=0; i<current_width; ++i) begin
         @(negedge clk);
         in_valid_data 	<= '1;
         in_stream_data 	<= file_data_queue_r.pop_front();
@@ -159,55 +172,69 @@ begin : main
 	in_first_data = '0;
 	in_last_data = '0;
 
+	in_mode_csr = '0;
+
 	#100ns rst_n = '1;
 
-	foreach (original_images_paths[i]) begin
-		last_slash_pos = -1;
-        last_dot_pos = -1;
+	for (int enable_range_mode = 0; enable_range_mode < 2; enable_range_mode++)
+		begin
+			in_mode_csr[1] = enable_range_mode;
+			for (int enable_iside_range = 0; enable_iside_range < 2; enable_iside_range++) begin
+				in_mode_csr[2] = enable_iside_range && in_mode_csr[1];
+				foreach (allowed_resolutions[i]) begin
+					current_width = allowed_resolutions[i][0];
+					current_height = allowed_resolutions[i][1];
+					current_total_bytes = current_width * current_height;
 
-		// Manual search for last slash
-      	for (int j = 0; j < original_images_paths[i].len(); j++) begin
-      	    if (original_images_paths[i][j] == "/") begin
-      	        last_slash_pos = j;
-      	    end
-      	end
+					current_width_str = $sformatf("%0d", current_width);
+					current_height_str = $sformatf("%0d", current_height); 
 
-      	for (int j = 0; j < original_images_paths[i].len(); j++) begin
-      	    if (original_images_paths[i][j] == ".") begin
-      	        last_dot_pos = j;
-      	    end
-      	end
+					foreach (original_images_names_templates[j]) begin
+						$display("current original name is");
+						$display(original_images_names_templates[j]);
+						$display("current in_mode_csr[0] is");
+						$display(in_mode_csr[0]);
+						$display("current in_mode_csr[1] is");
+						$display(in_mode_csr[1]);
 
-		if (last_slash_pos == -1) begin
-       	    $error("Failed to parse filename");
-       	    $finish();
-       	end
+						current_original_name = $sformatf("%s%s_%s/%s%s_%s.data", input_files_path_template, current_width_str, current_height_str, 
+																					original_images_names_templates[j], current_width_str, current_height_str);
+						$display("current original name is");
+						$display(current_original_name);
+						
 
-		$display("Found slash at %d", last_slash_pos);
-      	if (last_slash_pos != -1) begin
-      	    filename = original_images_paths[i].substr(last_slash_pos + 1, last_dot_pos-1);
-      	end
-      	else begin
-      	    filename = original_images_paths[i];
-      	end
+						if(in_mode_csr[1]) begin
+							if(in_mode_csr[2]) begin
+								current_output_dir = $sformatf("%s%s_%s/%s%s_%s_ranged_inside.data", result_pathes_template, current_width_str, current_height_str,
+																	original_images_names_templates[j], current_width_str, current_height_str);
+							end
+							else begin
+								current_output_dir = $sformatf("%s%s_%s/%s%s_%s_ranged_outside.data", result_pathes_template, current_width_str, current_height_str,
+																	original_images_names_templates[j], current_width_str, current_height_str);
+							end
+						end
+						else begin
+							current_output_dir = $sformatf("%s%s_%s/%s%s_%s.data", result_pathes_template, current_width_str, current_height_str,
+																	original_images_names_templates[j], current_width_str, current_height_str);
+						end
+						$display("current output name is");
+						$display(current_output_dir);
 
-		output_file_path = $sformatf("%s/%s.data", result_pathes_template, filename);
+						result_fd  = $fopen(current_output_dir, "wb");
+						read_file(current_original_name, current_total_bytes);
 
-		$display("Current file input path is %s", original_images_paths[i]);
-      	$display("Current file name is %s", filename);
-      	$display("Current file output path is %s", output_file_path);
+						repeat(100) @(posedge clk);
+						for (int i=0; i<current_height; ++i) begin
+							send_one_line(current_width);
+							repeat(100) @(posedge clk);
+						end
 
-      	result_fd  = $fopen(output_file_path, "wb");
-      	read_file(original_images_paths[i]);
+					$fclose(result_fd);
+					end
+				end	
+			end
+		end
 
-		repeat(100) @(posedge clk);
-        for (int i=0; i<LINNUM; ++i) begin
-            send_one_line();
-            repeat(100) @(posedge clk);
-        end
-
-		$fclose(result_fd);
-	end
 	
 	$finish();
 end
