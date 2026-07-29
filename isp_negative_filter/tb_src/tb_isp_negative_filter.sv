@@ -36,7 +36,7 @@ int    		last_dot_pos                    		;
 string   	output_file_path                        ;
 int      	result_fd                               ;
 
-string result_pathes_template ="../../../../../../../isp_negative_filter/results/";
+string result_pathes_template ="../../../../../../../isp_image_cutter/results/";
 string current_output_dir;
 
 int allowed_resolutions[4][2] = 	'{
@@ -229,7 +229,7 @@ begin : main
 							repeat(100) @(posedge clk);
 						end
 
-					$fclose(result_fd);
+						$fclose(result_fd);
 					end
 				end	
 			end

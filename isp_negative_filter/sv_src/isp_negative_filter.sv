@@ -2,8 +2,7 @@ module isp_negative_filter
 #
 (
 	parameter 	int 	DATA_WIDTH 	= 8,
-	parameter 	int 	CSR_WIDTH 	= 32,
-	parameter 	int 	SYNC_RESET 	= 0
+	parameter 	int 	CSR_WIDTH 	= 32
 )
 
 (
