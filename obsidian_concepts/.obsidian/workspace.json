@@ -4,19 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "46047512a2424ae8",
+        "id": "c14e3ce50c311406",
         "type": "tabs",
         "children": [
           {
-            "id": "34f9783f923ae51e",
+            "id": "e246e542bc22cdc4",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "isp_concepts/isp_image_cutter/Image_cutter_concept.excalidraw.md"
+                "file": "isp_concepts/isp_gamma_correction/Gamma_correction_concept.excalidraw.md"
               },
               "icon": "excalidraw-icon",
-              "title": "Image_cutter_concept.excalidraw"
+              "title": "Gamma_correction_concept.excalidraw"
             }
           }
         ]
@@ -180,9 +180,11 @@
       "obsidian-excalidraw-plugin:Создать новый чертеж": false
     }
   },
-  "active": "34f9783f923ae51e",
+  "active": "e246e542bc22cdc4",
   "lastOpenFiles": [
     "isp_concepts/isp_negative_filter/Negative_filter_concept.excalidraw.md",
-    "isp_concepts/isp_image_cutter/Image_cutter_concept.excalidraw.md"
+    "isp_concepts/isp_gamma_correction/Gamma_correction_concept.excalidraw.md",
+    "isp_concepts/isp_image_cutter/Image_cutter_concept.excalidraw.md",
+    "isp_concepts/isp_gamma_correction/Без названия.md"
   ]
 }
