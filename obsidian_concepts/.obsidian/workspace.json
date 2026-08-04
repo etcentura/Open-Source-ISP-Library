@@ -4,19 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "c14e3ce50c311406",
+        "id": "3fcebdb5635d35f2",
         "type": "tabs",
         "children": [
           {
-            "id": "e246e542bc22cdc4",
+            "id": "9c0326656feb6243",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "isp_concepts/isp_gamma_correction/Gamma_correction_concept.excalidraw.md"
+                "file": "isp_concepts/isp_histogram_equalization/simple_histtogram_equalization.excalidraw.md"
               },
               "icon": "excalidraw-icon",
-              "title": "Gamma_correction_concept.excalidraw"
+              "title": "simple_histtogram_equalization.excalidraw"
             }
           }
         ]
@@ -39,7 +39,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Файловый менеджер"
@@ -180,10 +182,13 @@
       "obsidian-excalidraw-plugin:Создать новый чертеж": false
     }
   },
-  "active": "e246e542bc22cdc4",
+  "active": "9c0326656feb6243",
   "lastOpenFiles": [
-    "isp_concepts/isp_negative_filter/Negative_filter_concept.excalidraw.md",
+    "Pasted Image 20260803224444_493.png",
     "isp_concepts/isp_gamma_correction/Gamma_correction_concept.excalidraw.md",
+    "isp_concepts/isp_histogram_equalization/simple_histtogram_equalization.excalidraw.md",
+    "isp_concepts/isp_histogram_equalization",
+    "isp_concepts/isp_negative_filter/Negative_filter_concept.excalidraw.md",
     "isp_concepts/isp_image_cutter/Image_cutter_concept.excalidraw.md",
     "isp_concepts/isp_gamma_correction/Без названия.md"
   ]
