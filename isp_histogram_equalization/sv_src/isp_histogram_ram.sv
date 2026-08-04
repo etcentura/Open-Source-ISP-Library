@@ -2,7 +2,7 @@ module isp_histogram_ram
 #
 (
     parameter 	int 	RAM_DATA_WIDTH 			= 8,
-    parameter 	int 	RAM_ADDR_WIDTH 			= 8,
+    parameter 	int 	RAM_ADDR_WIDTH 			= 8
 )
 
 (

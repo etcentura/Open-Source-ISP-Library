@@ -9,8 +9,8 @@ module isp_histogram_equalization
 
 (
 	//Basic signals declaration
-	input 	logic 				 			clk,
-	input 	logic 				 			rst_n,
+	input 	logic 				 					clk,
+	input 	logic 				 					rst_n,
 
 	//Input signals signals declaration
 	input 	logic 	[DATA_WIDTH-1:0] 				in_stream_data,
@@ -450,7 +450,7 @@ isp_histogram_ram
 #
 (
     .RAM_DATA_WIDTH	(PIXELS_SUM_WIDTH 			),
-    .RAM_ADDR_WIDTH	(DATA_WIDTH 				),
+    .RAM_ADDR_WIDTH	(DATA_WIDTH 				)
 )
 					isp_histogram_ram_i_gather
 (
@@ -464,8 +464,8 @@ isp_histogram_ram
     .regcea 		('1 						),
     .regceb 		('1 						),
 
-    .addra 			(ram_addra_passed 			)
-    .addrb 			(ram_addrb_passed 			)
+    .addra 			(ram_addra_passed 			),
+    .addrb 			(ram_addrb_passed 			),
     .dina 			(ram_dataa_passed 			),
     .dinb 			(ram_datab_passed 			),
     .douta 			(ram_collect_hist_douta 	),
@@ -551,7 +551,7 @@ isp_histogram_ram
 #
 (
     .RAM_DATA_WIDTH	(DATA_WIDTH 				),
-    .RAM_ADDR_WIDTH	(DATA_WIDTH 				),
+    .RAM_ADDR_WIDTH	(DATA_WIDTH 				)
 )
 					isp_histogram_ram_i_store
 (
@@ -565,8 +565,8 @@ isp_histogram_ram
     .regcea 		('1 							),
     .regceb 		('1 							),
 
-    .addra 			(recalc_division_address 		)
-    .addrb 			(latch_stream_data 				)
+    .addra 			(recalc_division_address 		),
+    .addrb 			(latch_stream_data 				),
     .dina 			(recalc_division_value 			),
     .dinb 			('0								),
     .douta 			( 								),
