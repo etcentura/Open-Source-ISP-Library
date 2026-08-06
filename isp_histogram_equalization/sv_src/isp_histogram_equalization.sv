@@ -33,13 +33,13 @@ module isp_histogram_equalization
 );
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-//Begin of function to calculate the address width based on specified RAM depth
+//Begin of function to calculate clog2 of the number depth
 function integer clogb2;
     input integer number;
       for (clogb2 = 0; number > 0; clogb2 = clogb2 + 1)
         number = number >> 1;
   endfunction
-//End of function to calculate the address width based on specified RAM depth
+//End of function to calculate clog2 of the number depth
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -62,13 +62,13 @@ logic 				 									latch_first_data;
 logic 				 									latch_last_data;
 
 //Delay signals to get data from the second ram
-logic 													latch_valid_data_d_0;
-logic 													latch_first_data_d_0;
-logic 													latch_last_data_d_0;
+logic 													latch_valid_data_d_0_final;
+logic 													latch_first_data_d_0_final;
+logic 													latch_last_data_d_0_final;
 
-logic 													latch_valid_data_d_1;
-logic 													latch_first_data_d_1;
-logic 													latch_last_data_d_1;
+logic 													latch_valid_data_d_1_final;
+logic 													latch_first_data_d_1_final;
+logic 													latch_last_data_d_1_final;
 
 //Resulting data from the second ram
 logic 	[DATA_WIDTH-1:0] 								result_stream_data_from_ram;
@@ -105,7 +105,7 @@ logic 	[PIXELS_SUM_WIDTH-1:0] 							ram_collect_hist_doutb;
 logic 													are_ports_fsm_controlled;
 
 //FSM signals
-logic 	[DATA_WIDTH-1:0] 								fsm_timing_counter;
+logic 	[DATA_WIDTH-1:0] 									fsm_timing_counter;
 logic 													fsm_first_frame_done;
 enum 	logic 	[7:0] 					{
 											IDLE, 
@@ -139,6 +139,8 @@ logic 	[PIXELS_SUM_WIDTH-1:0] 							recalc_denominator;
 
 logic 	[DATA_WIDTH-1:0] 								recalc_division_value;
 logic 													recalc_division_write;
+logic 													recalc_division_write_d_0;
+logic 													recalc_division_write_d_1;
 logic 	[DATA_WIDTH-1:0] 								recalc_division_address;
 
 
@@ -376,10 +378,6 @@ end
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //Begin of adding one into the current cummulation histogram section
-logic 	[DATA_WIDTH-1:0] 				addone_ram_address;
-logic 				 					addone_ram_write_flag;
-logic 	[PIXELS_SUM_WIDTH-1:0]			addone_cumulative_hist_val;
-
 always_ff @(posedge clk or negedge rst_n)
 begin
 	if(!rst_n)
@@ -420,7 +418,7 @@ begin
 			ram_datab_passed = '0;
 			ram_web_passed = '0;
 		end
-		else if((state == FIND_MIN_CUMSUM) || (state == RECALCULATE_CDF)) begin
+		else if(state == FIND_MIN_CUMSUM) begin
 			ram_addra_passed = fsm_timing_counter;
 			ram_dataa_passed = '0;
 			ram_wea_passed ='0;
@@ -429,6 +427,15 @@ begin
 			ram_datab_passed = '0;
 			ram_web_passed = '0;
 		end
+	end
+	else if (state == RECALCULATE_CDF) begin
+		ram_addra_passed = fsm_timing_counter;
+		ram_dataa_passed = '0;
+		ram_wea_passed ='0;
+			
+		ram_addrb_passed = '0;
+		ram_datab_passed = '0;
+		ram_web_passed = '0;
 	end
 	else begin
 		ram_addra_passed = latch_stream_data;
@@ -482,11 +489,11 @@ begin
 	case (state)
 		IDLE, CLEAR_RAM:
 			begin
-				cdf_minimum <= 2**PIXELS_SUM_WIDTH-1;
+				cdf_minimum <= '1;
 			end
 		default:
 			begin
-				if(cdf_find_flag_d_1) begin
+				if(cdf_find_flag_d_0) begin
 					if(ram_collect_hist_douta < cdf_minimum)begin
 						cdf_minimum <= ram_collect_hist_douta;
 					end
@@ -507,13 +514,13 @@ begin
 			begin
 				cdf_numerator_calculation_flag <= '0;
 
-				if(cdf_recalc_flag_d_1) begin
+				if(cdf_recalc_flag_d_0) begin
 					cdf_numerator_calculation_flag <= '1;
 					if(ram_collect_hist_douta < cdf_minimum)begin
-						recalc_numerator <= '0;
+						recalc_numerator <= recalc_numerator + cdf_minimum;
 					end
 					else begin
-						recalc_numerator <= ram_collect_hist_douta - cdf_minimum;
+						recalc_numerator <= recalc_numerator + ram_collect_hist_douta - cdf_minimum;
 					end
 				end
 			end
@@ -529,10 +536,23 @@ end
 always_ff @(posedge clk)
 begin
 	recalc_division_write <= '0;
-	recalc_division_address <= '0;
 	if(cdf_numerator_exp_calculation_flag) begin
 		recalc_division_value <= recalc_numerator_expanded/recalc_denominator;
 		recalc_division_write <= '1;
+	end
+end
+
+//Delaying hist write for one clk beat
+always_ff @(posedge clk)
+begin
+	recalc_division_write_d_0 <= recalc_division_write;
+	recalc_division_write_d_1 <= recalc_division_write_d_0;
+end
+
+always_ff @(posedge clk)
+begin
+	recalc_division_address <= '0;
+	if ((recalc_division_write) || (recalc_division_write_d_0)) begin
 		recalc_division_address <= recalc_division_address + 1;
 	end
 end
@@ -558,7 +578,9 @@ isp_histogram_ram
     .clka 			(clk 							),
     .rsta 			(rst_n 							),
     .rstb 			(rst_n 							),
-    .wea 			(recalc_division_write 			),
+    .wea 			(recalc_division_write || 
+						recalc_division_write_d_0 ||	
+						recalc_division_write_d_1	),
     .web 			('0 							),
     .ena 			('1 							),
     .enb 			('1 							),
@@ -580,22 +602,22 @@ isp_histogram_ram
 //Begin of delaying signals to correctly get results from the second ram section
 always_ff @(posedge clk) 
 begin
-	latch_valid_data_d_0 <= '0;
-	latch_first_data_d_0 <= '0;
-	latch_last_data_d_0 <= '0;
+	latch_valid_data_d_0_final <= '0;
+	latch_first_data_d_0_final <= '0;
+	latch_last_data_d_0_final <= '0;
 
-	latch_valid_data_d_1 <= '0;
-	latch_first_data_d_1 <= '0;
-	latch_last_data_d_1 <= '0;
+	latch_valid_data_d_1_final <= '0;
+	latch_first_data_d_1_final <= '0;
+	latch_last_data_d_1_final <= '0;
 
 	if(fsm_first_frame_done) begin
-		latch_valid_data_d_0 <= latch_valid_data;
-		latch_first_data_d_0 <= latch_first_data;
-		latch_last_data_d_0 <= latch_last_data;
+		latch_valid_data_d_0_final <= latch_valid_data;
+		latch_first_data_d_0_final <= latch_first_data;
+		latch_last_data_d_0_final <= latch_last_data;
 
-		latch_valid_data_d_1 <= latch_valid_data_d_0;
-		latch_first_data_d_1 <= latch_first_data_d_0;
-		latch_last_data_d_1 <= latch_last_data_d_0;
+		latch_valid_data_d_1_final <= latch_valid_data_d_0_final;
+		latch_first_data_d_1_final <= latch_first_data_d_0_final;
+		latch_last_data_d_1_final <= latch_last_data_d_0_final;
 	end
 end
 //End of delaying signals to correctly get results from the second ram section
@@ -615,9 +637,9 @@ begin
 	else
 		begin
 			result_stream_data <= result_stream_data_from_ram;
-			result_valid_data <= latch_valid_data_d_1;
-			result_first_data <= latch_first_data_d_1;
-			result_last_data <= latch_last_data_d_1;
+			result_valid_data <= latch_valid_data_d_1_final;
+			result_first_data <= latch_first_data_d_1_final;
+			result_last_data <= latch_last_data_d_1_final;
 		end
 end
 //End of driving result register section
